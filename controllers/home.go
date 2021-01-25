@@ -1,8 +1,16 @@
 package controllers
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"fiapi/models"
+
+	"github.com/gofiber/fiber/v2"
+)
 
 // Hello hanlde api status
 func Hello(c *fiber.Ctx) error {
-	return c.JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": nil})
+	return c.JSON(&models.Response{
+		Data:    nil,
+		Message: "Hello i'm ok!",
+		Success: true,
+	})
 }
