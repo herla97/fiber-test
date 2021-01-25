@@ -1,11 +1,10 @@
 package config
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"fiapi/models"
 
-type httpError struct {
-	Statuscode int    `json:"statusCode"`
-	Error      string `json:"error"`
-}
+	"github.com/gofiber/fiber/v2"
+)
 
 // ErrorHandler is used to catch error thrown inside the routes by ctx.Next(err)
 func ErrorHandler(c *fiber.Ctx, err error) error {
@@ -17,8 +16,9 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
 		code = e.Code
 	}
 
-	return c.Status(code).JSON(&httpError{
-		Statuscode: code,
-		Error:      err.Error(),
+	return c.Status(code).JSON(&models.Response{
+		Data:    nil,
+		Message: err.Error(),
+		Success: false,
 	})
 }
