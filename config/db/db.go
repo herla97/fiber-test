@@ -9,8 +9,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// DB gorm connector
-var DB *gorm.DB
+// Connection gorm connector
+var Connection *gorm.DB
 var err error
 
 // Connect connect to db
@@ -23,12 +23,12 @@ func Connect() {
 		config.Env("DB_PASSWORD"),
 	)
 
-	DB, err = gorm.Open(postgres.Open(dns), &gorm.Config{})
+	Connection, err = gorm.Open(postgres.Open(dns), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
 
-	sqlDB, err := DB.DB()
+	sqlDB, err := Connection.DB()
 	if err != nil {
 		panic(err)
 	}
@@ -43,13 +43,9 @@ func Connect() {
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
 	fmt.Println("Connection Opened to Database")
-	fmt.Println("Database Migrated")
-	// DB.AutoMigrate(&model.Product{}, &model.User{})
-
-	// return DB
 }
 
 // Migrate migrates all the database tables
 func Migrate(tables ...interface{}) error {
-	return DB.AutoMigrate(tables...)
+	return Connection.AutoMigrate(tables...)
 }

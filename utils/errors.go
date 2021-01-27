@@ -1,4 +1,4 @@
-package config
+package utils
 
 import (
 	"fiapi/models"
@@ -21,4 +21,12 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
 		Message: err.Error(),
 		Success: false,
 	})
+}
+
+// JwtError is used for catch any error in Protect() JWT function middleware
+func JwtError(c *fiber.Ctx, err error) error {
+	if err.Error() == "Missing or malformed JWT" {
+		return fiber.NewError(fiber.StatusBadRequest, "Missing or malformed JWT")
+	}
+	return fiber.NewError(fiber.StatusUnauthorized, "Invalid or expired JWT")
 }
