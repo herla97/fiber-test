@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"fiapi/config"
-	"fiapi/utils"
+	"fiapi/controllers"
 
 	"github.com/gofiber/fiber/v2"
 	jwtware "github.com/gofiber/jwt/v2"
@@ -12,6 +12,6 @@ import (
 func Protected() fiber.Handler {
 	return jwtware.New(jwtware.Config{
 		SigningKey:   []byte(config.Env("JWT_SECRET")),
-		ErrorHandler: utils.JwtError,
+		ErrorHandler: controllers.JwtError,
 	})
 }

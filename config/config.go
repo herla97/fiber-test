@@ -7,10 +7,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// ENV is used to help switch settings based on where the
-// application is being run. Default is "dev".
-var ENV = os.Setenv("GO_ENV", "dev")
-
 // Env func to get env value
 func Env(key string) string {
 	// load .env file

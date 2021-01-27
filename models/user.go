@@ -2,10 +2,10 @@ package models
 
 import (
 	"errors"
+	"fiapi/utils"
 
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -21,7 +21,8 @@ type User struct {
 
 // Exist user function. TODO: Busqueda dinámica.
 func (u *User) Exist(tx *gorm.DB) bool {
-	if err := tx.First(u, "email = ?", u.Email).Error; err != nil {
+	err := tx.First(u, "email = ?", u.Email).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return false
 	}
 	return true
@@ -59,12 +60,10 @@ func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 		return errors.New("usuario existente")
 	}
 
-	// PasswordHash generator
-	ph, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+	u.Password, err = utils.HashPassword(u.Password)
 	if err != nil {
 		return err
 	}
-	u.Password = string(ph)
 	return nil
 }
 

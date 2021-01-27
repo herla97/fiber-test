@@ -17,17 +17,21 @@ func AuthUsers(c *fiber.Ctx) error {
 
 	db := db.Connection // Instance of connection to db
 	if err := c.BodyParser(auth); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, "Review your input")
+		return fiber.NewError(fiber.StatusBadRequest, "review your input")
 	}
 
 	// User search
 	if err := db.Where("email = ?", auth.Username).Find(user).Error; err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, "Invalid email or password")
+		return fiber.NewError(fiber.StatusUnauthorized, "email o contraseña invalida")
 	}
 
-	// Password validation
-	if err := utils.VerifyPassword(user.Password, auth.Password); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, "Invalid email or password")
+	matches, err := utils.VerifyPassword(auth.Password, user.Password)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	if !matches {
+		return fiber.NewError(fiber.StatusUnauthorized, "email o contraseña invalida")
 	}
 
 	// Token generator. Return token string

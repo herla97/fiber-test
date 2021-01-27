@@ -7,6 +7,7 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // Connection gorm connector
@@ -26,6 +27,10 @@ func Connect() {
 	Connection, err = gorm.Open(postgres.Open(dns), &gorm.Config{})
 	if err != nil {
 		panic(err)
+	}
+
+	if config.Env("APP_ENV") == "dev" {
+		Connection.Logger.LogMode(logger.Info)
 	}
 
 	sqlDB, err := Connection.DB()
