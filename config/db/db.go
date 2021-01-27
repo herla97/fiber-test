@@ -24,13 +24,15 @@ func Connect() {
 		config.Env("DB_PASSWORD"),
 	)
 
-	Connection, err = gorm.Open(postgres.Open(dns), &gorm.Config{})
-	if err != nil {
-		panic(err)
-	}
+	gormConfig := &gorm.Config{}
 
 	if config.Env("APP_ENV") == "dev" {
-		Connection.Logger.LogMode(logger.Info)
+		gormConfig.Logger = logger.Default.LogMode(logger.Info)
+	}
+
+	Connection, err = gorm.Open(postgres.Open(dns), gormConfig)
+	if err != nil {
+		panic(err)
 	}
 
 	sqlDB, err := Connection.DB()
